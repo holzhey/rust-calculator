@@ -1,5 +1,5 @@
 use axum::{Router, routing::get};
-use maud::{Markup, html};
+use maud::{DOCTYPE, Markup, html};
 
 #[tokio::main]
 async fn main() {
@@ -10,6 +10,13 @@ async fn main() {
 
 async fn root() -> Markup {
     html! {
-        h1 { "Hello 2" }
+        (DOCTYPE)
+        meta charset="utf-8";
+        form {
+            input type="button" value="1";
+            input type="button" value="2";
+            input type="text" name="output" value="";
+            label for="output" { "Resultado" };
+        }
     }
 }
