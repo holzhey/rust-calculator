@@ -1,4 +1,5 @@
 use axum::{Router, routing::get};
+use maud::{Markup, html};
 
 #[tokio::main]
 async fn main() {
@@ -7,7 +8,8 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn root() -> &'static str {
-    "Hello"
+async fn root() -> Markup {
+    html! {
+        h1 { "Hello 2" }
+    }
 }
-
