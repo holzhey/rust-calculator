@@ -1,8 +1,9 @@
 use axum::{
-    Router,
+    Form, Router,
     routing::{get, post},
 };
 use maud::{DOCTYPE, Markup, html};
+use serde::Deserialize;
 
 #[tokio::main]
 async fn main() {
@@ -27,8 +28,18 @@ async fn root() -> Markup {
     }
 }
 
-async fn calc() -> Markup {
+#[derive(Deserialize, Debug)]
+struct Operation {
+    result: String,
+    digit: String,
+}
+
+async fn calc(Form(operation): Form<Operation>) -> Markup {
+    let current_result = operation.result.to_owned();
+    let new_digit = operation.digit.to_owned();
+    let new_result = format!("{current_result}{new_digit}");
     html! {
-         input name="result" type="text" value="1";
+         input name="result" type="text" value=(new_result);
     }
 }
+
