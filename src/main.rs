@@ -45,7 +45,11 @@ fn header() -> Markup {
 
 fn button(target: &str, value: String) -> Markup {
     html! {
-        button hx-post=(target) hx-include="[name='output']" hx-target="[name='output']" name="action" value=(value) { (value) };
+        button
+            hx-post=(target)
+            hx-include="[name='output']"
+            hx-target="[name='output']"
+            name="action" value=(value) { (value) };
     }
 }
 
@@ -72,3 +76,4 @@ async fn operation(Form(operation): Form<Operation>) -> Markup {
     let new_result = current_acc + current_result;
     output("".to_string(), new_result.to_string())
 }
+
