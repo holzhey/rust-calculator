@@ -17,20 +17,12 @@ async fn main() {
 
 async fn root() -> Markup {
     html! {
-       (DOCTYPE)
-        head {
-            meta charset="utf-8";
-            script src="https://unpkg.com/htmx.org@2.0.4" {};
-        }
+        (header())
         @for number in 0..=9 {
-            button hx-post="/input" hx-include="[name='output']" hx-target="[name='output']" name="action" value=(number) { (number) };
+            (button("/input", number.to_string()))
         }
-        button hx-post="/operation" hx-include="[name='output']" hx-target="[name='output']" name="action" value="+" { "+" };
+        (button("/operation", "+".to_string()))
         (output("".to_string(), "0".to_string()))
-        div name="output" {
-            input name="result" type="text" value="";
-            input name="accumulator" type="text" value="0";
-       }
     }
 }
 
@@ -39,6 +31,22 @@ struct Operation {
     result: String,
     action: String,
     accumulator: String,
+}
+
+fn header() -> Markup {
+    html! {
+        (DOCTYPE)
+        head {
+            meta charset="utf-8";
+            script src="https://unpkg.com/htmx.org@2.0.4" {};
+        }
+    }
+}
+
+fn button(target: &str, value: String) -> Markup {
+    html! {
+        button hx-post=(target) hx-include="[name='output']" hx-target="[name='output']" name="action" value=(value) { (value) };
+    }
 }
 
 fn output(result: String, accumulator: String) -> Markup {
