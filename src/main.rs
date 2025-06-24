@@ -26,6 +26,7 @@ async fn root() -> Markup {
             button hx-post="/input" hx-include="[name='output']" hx-target="[name='output']" name="action" value=(number) { (number) };
         }
         button hx-post="/operation" hx-include="[name='output']" hx-target="[name='output']" name="action" value="+" { "+" };
+        (output("".to_string(), "0".to_string()))
         div name="output" {
             input name="result" type="text" value="";
             input name="accumulator" type="text" value="0";
@@ -40,23 +41,26 @@ struct Operation {
     accumulator: String,
 }
 
+fn output(result: String, accumulator: String) -> Markup {
+    html! {
+        div name="output" {
+            input name="result" type="text" value=(result);
+            input name="accumulator" type="text" value=(accumulator);
+        }
+    }
+}
+
 async fn input(Form(input): Form<Operation>) -> Markup {
     let current_result = input.result.to_owned();
     let current_acc = input.accumulator.to_owned();
     let new_digit = input.action.to_owned();
     let new_result = format!("{current_result}{new_digit}");
-    html! {
-        input name="result" type="text" value=(new_result);
-        input name="accumulator" type="text" value=(current_acc);
-    }
+    output(new_result, current_acc)
 }
 
 async fn operation(Form(operation): Form<Operation>) -> Markup {
     let current_result = operation.result.parse::<i32>().unwrap();
     let current_acc = operation.accumulator.parse::<i32>().unwrap();
     let new_result = current_acc + current_result;
-    html! {
-        input name="result" type="text" value="";
-        input name="accumulator" type="text" value=(new_result);
-    }
+    output("".to_string(), new_result.to_string())
 }
