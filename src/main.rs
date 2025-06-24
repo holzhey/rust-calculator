@@ -9,8 +9,8 @@ use serde::Deserialize;
 async fn main() {
     let app = Router::new()
         .route("/", get(root))
-        .route("/calc", post(input))
-        .route("/add", post(operation));
+        .route("/input", post(input))
+        .route("/operation", post(operation));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -23,9 +23,9 @@ async fn root() -> Markup {
             script src="https://unpkg.com/htmx.org@2.0.4" {};
         }
         @for number in 0..=9 {
-            button hx-post="/calc" hx-include="[name='output']" hx-target="[name='output']" name="action" value=(number) { (number) };
+            button hx-post="/input" hx-include="[name='output']" hx-target="[name='output']" name="action" value=(number) { (number) };
         }
-        button hx-post="/add" hx-include="[name='output']" hx-target="[name='output']" name="action" value="+" { "+" };
+        button hx-post="/operation" hx-include="[name='output']" hx-target="[name='output']" name="action" value="+" { "+" };
         div name="output" {
             input name="result" type="text" value="";
             input name="accumulator" type="text" value="0";
@@ -60,4 +60,3 @@ async fn operation(Form(operation): Form<Operation>) -> Markup {
         input name="accumulator" type="text" value=(new_result);
     }
 }
-
