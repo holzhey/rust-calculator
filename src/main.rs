@@ -19,10 +19,10 @@ async fn root() -> Markup {
     html! {
         (header())
         @for number in 0..=9 {
-            (button("/input", number.to_string()))
+            (button("/input", &number.to_string()))
         }
-        (button("/operation", "+".to_string()))
-        (output("".to_string(), "0".to_string()))
+        (button("/operation", "+"))
+        (output("", "0"))
     }
 }
 
@@ -43,7 +43,7 @@ fn header() -> Markup {
     }
 }
 
-fn button(target: &str, value: String) -> Markup {
+fn button(target: &str, value: &str) -> Markup {
     html! {
         button
             hx-post=(target)
@@ -53,7 +53,7 @@ fn button(target: &str, value: String) -> Markup {
     }
 }
 
-fn output(result: String, accumulator: String) -> Markup {
+fn output(result: &str, accumulator: &str) -> Markup {
     html! {
         div name="output" {
             input name="result" type="text" value=(result);
@@ -67,13 +67,13 @@ async fn input(Form(input): Form<Operation>) -> Markup {
     let current_acc = input.accumulator.to_owned();
     let new_digit = input.action.to_owned();
     let new_result = format!("{current_result}{new_digit}");
-    output(new_result, current_acc)
+    output(&new_result, &current_acc.to_string())
 }
 
 async fn operation(Form(operation): Form<Operation>) -> Markup {
     let current_result = operation.result.parse::<i32>().unwrap();
     let current_acc = operation.accumulator.parse::<i32>().unwrap();
     let new_result = current_acc + current_result;
-    output("".to_string(), new_result.to_string())
+    output("", &new_result.to_string())
 }
 
