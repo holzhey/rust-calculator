@@ -9,8 +9,8 @@ use serde::Deserialize;
 async fn main() {
     let app = Router::new()
         .route("/", get(page))
-        .route("/input", post(input))
-        .route("/operation", post(operation));
+        .route("/input", post(input_handler))
+        .route("/operation", post(operation_handler));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -26,9 +26,9 @@ async fn page() -> Markup {
     html! {
         (header())
         @for number in 0..=9 {
-            (button("/input", &number.to_string()))
+            (input(&number.to_string()))
         }
-        (button("/operation", "+"))
+        (operation("+"))
         (output("", "0"))
     }
 }
@@ -41,6 +41,14 @@ fn header() -> Markup {
             script src="https://unpkg.com/htmx.org@2.0.4" {};
         }
     }
+}
+
+fn input(value: &str) -> Markup {
+    button("/input", value)
+}
+
+fn operation(action: &str) -> Markup {
+    button("/operation", action)
 }
 
 fn button(target: &str, value: &str) -> Markup {
@@ -62,7 +70,7 @@ fn output(result: &str, accumulator: &str) -> Markup {
     }
 }
 
-async fn input(Form(input): Form<Operation>) -> Markup {
+async fn input_handler(Form(input): Form<Operation>) -> Markup {
     let current_result = input.result.to_owned();
     let current_acc = input.accumulator.to_owned();
     let new_digit = input.action.to_owned();
@@ -70,7 +78,7 @@ async fn input(Form(input): Form<Operation>) -> Markup {
     output(&new_result, &current_acc.to_string())
 }
 
-async fn operation(Form(operation): Form<Operation>) -> Markup {
+async fn operation_handler(Form(operation): Form<Operation>) -> Markup {
     let current_result = operation.result.parse::<i32>().unwrap();
     let current_acc = operation.accumulator.parse::<i32>().unwrap();
     let new_result = current_acc + current_result;
