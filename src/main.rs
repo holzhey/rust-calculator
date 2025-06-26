@@ -8,14 +8,21 @@ use serde::Deserialize;
 #[tokio::main]
 async fn main() {
     let app = Router::new()
-        .route("/", get(root))
+        .route("/", get(page))
         .route("/input", post(input))
         .route("/operation", post(operation));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn root() -> Markup {
+#[derive(Deserialize, Debug)]
+struct Operation {
+    result: String,
+    action: String,
+    accumulator: String,
+}
+
+async fn page() -> Markup {
     html! {
         (header())
         @for number in 0..=9 {
@@ -24,13 +31,6 @@ async fn root() -> Markup {
         (button("/operation", "+"))
         (output("", "0"))
     }
-}
-
-#[derive(Deserialize, Debug)]
-struct Operation {
-    result: String,
-    action: String,
-    accumulator: String,
 }
 
 fn header() -> Markup {
@@ -76,4 +76,3 @@ async fn operation(Form(operation): Form<Operation>) -> Markup {
     let new_result = current_acc + current_result;
     output("", &new_result.to_string())
 }
-
