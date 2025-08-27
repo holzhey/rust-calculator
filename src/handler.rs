@@ -27,5 +27,5 @@ pub async fn operation_handler(Form(operation): Form<Operation>) -> Markup {
     let current_result = operation.result.parse::<i32>().unwrap();
     let current_acc = operation.accumulator.parse::<i32>().unwrap();
     let new_result = current_acc + current_result;
-    output("", &new_result.to_string())
+    output("0", &new_result.to_string())
 }
