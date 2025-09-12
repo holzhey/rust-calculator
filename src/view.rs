@@ -17,7 +17,7 @@ pub fn page() -> Markup {
             (input(&number.to_string()))
         }
         (operation("+"))
-        (output("", "0"))
+        (output("0", "0"))
     }
 }
 

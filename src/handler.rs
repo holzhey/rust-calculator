@@ -4,9 +4,9 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct Operation {
-    result: String,
+    result: u32,
     action: String,
-    accumulator: String,
+    accumulator: u32,
 }
 
 pub async fn page() -> Markup {
@@ -22,8 +22,8 @@ pub async fn input(Form(input): Form<Operation>) -> Markup {
 }
 
 pub async fn operation(Form(operation): Form<Operation>) -> Markup {
-    let current_result = operation.result.parse::<i32>().unwrap();
-    let current_acc = operation.accumulator.parse::<i32>().unwrap();
+    let current_result = operation.result;
+    let current_acc = operation.accumulator;
     let new_result = current_acc + current_result;
     crate::view::output("0", &new_result.to_string())
 }
